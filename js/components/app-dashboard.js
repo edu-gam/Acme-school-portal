@@ -1,3 +1,5 @@
+// Creamos nuestro componente Dashboard
+
 class AppDashboard extends HTMLElement {
 
     constructor() {
@@ -9,6 +11,10 @@ class AppDashboard extends HTMLElement {
 
     connectedCallback() {
 
+        // Obtenemos los datos del usuario
+        const nombre = this.getAttribute("nombre") || "Usuario";
+        const cargo = this.getAttribute("cargo") || "";
+
         // Construimos el contenido del Dashboard
         this.shadowRoot.innerHTML = `
 
@@ -17,18 +23,22 @@ class AppDashboard extends HTMLElement {
                 :host {
                     display: block;
                     width: 100%;
+                    min-height: 100vh;
                 }
 
                 .dashboard {
                     width: 100%;
                     min-height: 100vh;
+
                     display: grid;
-                    grid-template-columns: 240px 1fr;
+                    grid-template-columns: 240px minmax(0, 1fr);
+
                     background-color: #f4f7fc;
-                    border-radius: 0;
-                    overflow: hidden;
                     font-family: Arial, sans-serif;
+                    overflow: hidden;
                 }
+
+                /* MENU LATERAL */
 
                 .sidebar {
                     background-color: #174ea6;
@@ -53,6 +63,7 @@ class AppDashboard extends HTMLElement {
                     display: block;
                     padding: 14px;
                     margin-bottom: 10px;
+
                     color: white;
                     text-decoration: none;
                     border-radius: 7px;
@@ -62,8 +73,16 @@ class AppDashboard extends HTMLElement {
                     background-color: #2563eb;
                 }
 
+                .menu a.activo {
+                    background-color: #2563eb;
+                    font-weight: bold;
+                }
+
+                /* CONTENIDO PRINCIPAL */
+
                 .content {
                     padding: 30px;
+                    min-width: 0;
                 }
 
                 .header {
@@ -71,6 +90,7 @@ class AppDashboard extends HTMLElement {
                     justify-content: space-between;
                     align-items: center;
                     margin-bottom: 40px;
+                    gap: 15px;
                 }
 
                 .user-info {
@@ -86,22 +106,29 @@ class AppDashboard extends HTMLElement {
                     font-size: 13px;
                     color: #64748b;
                 }
-                
+
+                /* BOTON CERRAR SESION */
+
                 .user-info button {
                     margin-top: 10px;
                     padding: 9px 15px;
-                    background-color: #ffffff;
+
+                    background-color: white;
                     color: #174ea6;
+
                     border: 1px solid #174ea6;
                     border-radius: 6px;
+
                     cursor: pointer;
                     font-weight: bold;
                 }
 
-                            .user-info button:hover {
+                .user-info button:hover {
                     background-color: #174ea6;
                     color: white;
-                }   
+                }
+
+                /* BIENVENIDA */
 
                 .welcome h1 {
                     color: #1e293b;
@@ -111,6 +138,8 @@ class AppDashboard extends HTMLElement {
                 .welcome p {
                     color: #64748b;
                 }
+
+                /* TARJETAS */
 
                 .cards {
                     display: grid;
@@ -123,7 +152,8 @@ class AppDashboard extends HTMLElement {
                     background-color: white;
                     padding: 25px;
                     border-radius: 12px;
-                    box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+
+                    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
                 }
 
                 .card h3 {
@@ -135,6 +165,8 @@ class AppDashboard extends HTMLElement {
                     font-size: 14px;
                     line-height: 1.5;
                 }
+
+                /* DISEÑO RESPONSIVE */
 
                 @media (max-width: 700px) {
 
@@ -157,19 +189,28 @@ class AppDashboard extends HTMLElement {
                         margin: 0;
                     }
 
+                    .content {
+                        padding: 20px;
+                    }
+
                     .cards {
                         grid-template-columns: 1fr;
                     }
 
                     .header {
-                        gap: 15px;
+                        align-items: flex-start;
                     }
 
                 }
 
             </style>
 
+
+            <!-- ESTRUCTURA DEL DASHBOARD -->
+
             <div class="dashboard">
+
+                <!-- MENU LATERAL -->
 
                 <aside class="sidebar">
 
@@ -179,15 +220,24 @@ class AppDashboard extends HTMLElement {
 
                     <nav class="menu">
 
-                        <a href="#">Inicio</a>
+                        <a href="#" data-seccion="inicio" class="activo">
+                            Inicio
+                        </a>
 
-                        <a href="#">Usuarios</a>
+                        <a href="#" data-seccion="usuarios">
+                            Usuarios
+                        </a>
 
-                        <a href="#">Exámenes</a>
+                        <a href="#" data-seccion="examenes">
+                            Exámenes
+                        </a>
 
                     </nav>
 
                 </aside>
+
+
+                <!-- CONTENIDO PRINCIPAL -->
 
                 <section class="content">
 
@@ -209,18 +259,24 @@ class AppDashboard extends HTMLElement {
 
                     </header>
 
+
+                    <!-- BIENVENIDA -->
+
                     <div class="welcome">
 
                         <h1 id="saludoUsuario"></h1>
 
-                        <p>
+                        <p id="descripcionVista">
                             Bienvenido a la plataforma de gestión
                             de Acme School.
                         </p>
 
                     </div>
 
-                    <div class="cards">
+
+                    <!-- TARJETAS PRINCIPALES -->
+
+                    <div class="cards" id="tarjetasInicio">
 
                         <div class="card">
 
@@ -232,6 +288,7 @@ class AppDashboard extends HTMLElement {
                             </p>
 
                         </div>
+
 
                         <div class="card">
 
@@ -252,12 +309,9 @@ class AppDashboard extends HTMLElement {
 
         `;
 
-        // Obtenemos los datos del usuario
-        const nombre = this.getAttribute("nombre");
 
-        const cargo = this.getAttribute("cargo");
+        // MOSTRAR INFORMACION DEL USUARIO
 
-        // Mostramos los datos en el Dashboard
         this.shadowRoot.querySelector("#nombreUsuario").textContent = nombre;
 
         this.shadowRoot.querySelector("#cargoUsuario").textContent = cargo;
@@ -265,20 +319,111 @@ class AppDashboard extends HTMLElement {
         this.shadowRoot.querySelector("#saludoUsuario").textContent =
             "¡Bienvenido, " + nombre + "!";
 
+
+        // CERRAR SESION
+
         const botonCerrarSesion =
             this.shadowRoot.querySelector("#btnCerrarSesion");
 
         botonCerrarSesion.addEventListener("click", () => {
 
+            // Enviamos un evento para cerrar la sesión
             this.dispatchEvent(new CustomEvent("logout-request", {
+
                 bubbles: true,
                 composed: true
-    }));
 
-});
+            }));
+
+        });
+
+
+        // NAVEGACION DEL MENU
+
+        // Seleccionamos los enlaces del menú
+        const enlacesMenu = this.shadowRoot.querySelectorAll(".menu a");
+
+        // Seleccionamos los elementos que vamos a modificar
+        const titulo = this.shadowRoot.querySelector("#saludoUsuario");
+
+        const descripcion =
+            this.shadowRoot.querySelector("#descripcionVista");
+
+        const tarjetas =
+            this.shadowRoot.querySelector("#tarjetasInicio");
+
+
+        // Recorremos los enlaces del menú
+        enlacesMenu.forEach(enlace => {
+
+            // Escuchamos los clics
+            enlace.addEventListener("click", (event) => {
+
+                event.preventDefault();
+
+                // Obtenemos la sección seleccionada
+                const seccion = enlace.dataset.seccion;
+
+
+                // Quitamos la selección anterior
+                enlacesMenu.forEach(item => {
+
+                    item.classList.remove("activo");
+
+                });
+
+
+                // Marcamos la opción seleccionada
+                enlace.classList.add("activo");
+
+
+                // COMPROBAMOS LA SECCION
+
+                if (seccion === "inicio") {
+
+                    titulo.textContent =
+                        "¡Bienvenido, " + nombre + "!";
+
+                    descripcion.textContent =
+                        "Bienvenido a la plataforma de gestión de Acme School.";
+
+                    tarjetas.style.display = "grid";
+
+                }
+
+                else if (seccion === "usuarios") {
+
+                    titulo.textContent =
+                        "Gestión de usuarios";
+
+                    descripcion.textContent =
+                        "Aquí podrás administrar los usuarios de Acme School.";
+
+                    tarjetas.style.display = "none";
+
+                }
+
+                else if (seccion === "examenes") {
+
+                    titulo.textContent =
+                        "Gestión de exámenes";
+
+                    descripcion.textContent =
+                        "Aquí podrás crear y administrar los exámenes.";
+
+                    tarjetas.style.display = "none";
+
+                }
+
+            });
+
+        });
 
     }
 
 }
+
+
+// REGISTRAMOS NUESTRO COMPONENTE
 
 customElements.define("app-dashboard", AppDashboard);

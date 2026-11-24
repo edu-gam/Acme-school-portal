@@ -81,10 +81,12 @@ contenedor.addEventListener("login-success", (event) => {
 
 contenedor.addEventListener("logout-request", () => {
 
+    // Cerramos la sesión
     cerrarSesion();
 
     const login = document.createElement("login-form");
 
+    // Reemplazamos el Dashboard por el Login
     contenedor.replaceChildren(login);
 
 });
