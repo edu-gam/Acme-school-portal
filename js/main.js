@@ -1,18 +1,38 @@
 import "./components/login-form.js";
+
 import {
     obtenerUsuarios,
     guardarUsuarios
 } from "./storage.js";
 
-// Obtenemos los usuarios actuales
-const usuariosActualizados = obtenerUsuarios();
+// OBTENER USUARIOS REGISTRADOS
+const usuarios = obtenerUsuarios();
 
-// Comprobamos si el docente ya está registrado
-const existeDocente = usuariosActualizados.some(
+const existeAdministrador = usuarios.some(
+    usuario => usuario.email === "admin@acmeschool.com"
+);
+
+if (!existeAdministrador) {
+
+    const administrador = {
+        identificacion: "1000000000",
+        nombreCompleto: "Administrador Acme",
+        email: "admin@acmeschool.com",
+        telefono: "3000000000",
+        cargo: "Administrativo",
+        password: "Admin123!"
+    };
+
+    usuarios.push(administrador);
+
+    console.log("Administrador registrado correctamente");
+
+}
+
+const existeDocente = usuarios.some(
     usuario => usuario.email === "docente@acmeschool.com"
 );
 
-// Si no existe, lo registramos
 if (!existeDocente) {
 
     const docente = {
@@ -24,37 +44,27 @@ if (!existeDocente) {
         password: "Docente123!"
     };
 
-    usuariosActualizados.push(docente);
-
-    guardarUsuarios(usuariosActualizados);
+    usuarios.push(docente);
 
     console.log("Docente registrado correctamente");
 
 }
 
-// Comprobamos nuestro almacenamiento
+// GUARDAR USUARIOS
+guardarUsuarios(usuarios);
+
 console.log("Usuarios guardados:", obtenerUsuarios());
 
-const usuarios = obtenerUsuarios();
 
-// Si no existen usuarios, creamos el administrador
-if (usuarios.length === 0) {
+// ESCUCHAR EVENTO DE LOGIN
+const contenedor = document.querySelector("main");
 
-    const administrador = {
-        identificacion: "1000000000",
-        nombreCompleto: "Administrador Acme",
-        email: "admin@acmeschool.com",
-        telefono: "3000000000",
-        cargo: "Administrativo",
-        password: "Admin123!"
-    };
+contenedor.addEventListener("login-success", (event) => {
 
-    // Guardamos el administrador
-    guardarUsuarios([administrador]);
+    const usuario = event.detail;
 
-    console.log("Administrador creado correctamente");
+    console.log("Usuario autenticado:", usuario.nombreCompleto);
 
-}
+    console.log("Cargo:", usuario.cargo);
 
-// Mostramos los usuarios registrados
-console.log("Usuarios guardados:", obtenerUsuarios());
+});

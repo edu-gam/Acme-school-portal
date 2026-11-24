@@ -142,6 +142,16 @@ formulario.addEventListener("submit", (event) => {
         mensaje.className = "mensaje exito";
 
         console.log("Inicio de sesión exitoso");
+        
+        this.dispatchEvent(new CustomEvent("login-success", {
+
+        detail: resultado.usuario,
+
+        bubbles: true,
+
+        composed: true
+
+}));
 
     } else {
 
