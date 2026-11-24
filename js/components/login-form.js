@@ -1,3 +1,4 @@
+import { iniciarSesion } from "../auth.js";
 class LoginForm extends HTMLElement {
 
     constructor() {
@@ -63,6 +64,20 @@ class LoginForm extends HTMLElement {
                 button:hover {
                     background-color: #1053b5;
                 }
+                
+                .mensaje {
+                    text-align: center;
+                    margin-top: 15px;
+                    font-size: 14px;
+                }
+
+                .mensaje.error {
+                    color: #dc2626;
+                }
+
+                .mensaje.exito {
+                    color: #15803d;
+                }
 
             </style>
 
@@ -96,32 +111,49 @@ class LoginForm extends HTMLElement {
                         Iniciar sesión
                     </button>
 
+                    <div id="mensaje" class="mensaje" role="status" aria-live="polite"></div>
+
                 </form>
 
             </div>
         `;
-    // Seleccionamos el formulario
-    const formulario = this.shadowRoot.querySelector("form");
+const formulario = this.shadowRoot.querySelector("form");
 
-    // Escuchamos cuando el usuario lo envía
-    formulario.addEventListener("submit", (event) => {
-
-    // Evitamos que la página se recargue
+// Escuchamos cuando se envía
+formulario.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    // Obtenemos los valores de los campos
-    const email = this.shadowRoot.querySelector("#email").value.trim();
+    // Obtenemos los datos ingresados
+    const email = this.shadowRoot.querySelector("#email").value.trim().toLowerCase();
 
     const password = this.shadowRoot.querySelector("#password").value;
 
-    // Mostramos los resultados en consola
-    console.log("Formulario enviado correctamente");
+    // Intentamos iniciar sesión
+    const resultado = iniciarSesion(email, password);
 
-    console.log("Correo ingresado:", email);
+    // Seleccionamos el espacio para mostrar mensajes
+    const mensaje = this.shadowRoot.querySelector("#mensaje");
 
-    console.log("¿Contraseña ingresada?:", password.length > 0 ? "Sí" : "No");
+    // Comprobamos el resultado
+    if (resultado.correcto) {
 
-    });
+        mensaje.textContent = "¡Bienvenido, " + resultado.usuario.nombreCompleto + "!";
+
+        mensaje.className = "mensaje exito";
+
+        console.log("Inicio de sesión exitoso");
+
+    } else {
+
+        mensaje.textContent = "Correo o contraseña incorrectos.";
+
+        mensaje.className = "mensaje error";
+
+        console.log("Credenciales incorrectas");
+
+    }
+
+});
     }
 }
 
