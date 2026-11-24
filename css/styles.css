@@ -6,19 +6,18 @@
 
 body {
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    width: 100%;
 
     font-family: Arial, sans-serif;
-    background-color: #c8cfd8;
+    background-color: #f4f7fc;
     color: #1e293b;
+}
 
+main {
+    width: 100%;
     min-height: 100vh;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-
 }

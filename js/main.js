@@ -1,4 +1,5 @@
 import "./components/login-form.js";
+import "./components/app-dashboard.js";
 
 import {
     obtenerUsuarios,
@@ -66,5 +67,13 @@ contenedor.addEventListener("login-success", (event) => {
     console.log("Usuario autenticado:", usuario.nombreCompleto);
 
     console.log("Cargo:", usuario.cargo);
+
+    const dashboard = document.createElement("app-dashboard");
+
+    dashboard.setAttribute("nombre", usuario.nombreCompleto);
+
+    dashboard.setAttribute("cargo", usuario.cargo);
+
+    contenedor.replaceChildren(dashboard);
 
 });
