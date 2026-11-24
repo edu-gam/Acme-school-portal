@@ -9,7 +9,6 @@ class LoginForm extends HTMLElement {
 
     connectedCallback() {
 
-        // Contenido del componente
         this.shadowRoot.innerHTML = `
             <style>
 
@@ -93,7 +92,7 @@ class LoginForm extends HTMLElement {
                         required
                     >
 
-                    <button type="button">
+                    <button type="submit">
                         Iniciar sesión
                     </button>
 
@@ -101,8 +100,29 @@ class LoginForm extends HTMLElement {
 
             </div>
         `;
+    // Seleccionamos el formulario
+    const formulario = this.shadowRoot.querySelector("form");
+
+    // Escuchamos cuando el usuario lo envía
+    formulario.addEventListener("submit", (event) => {
+
+    // Evitamos que la página se recargue
+    event.preventDefault();
+
+    // Obtenemos los valores de los campos
+    const email = this.shadowRoot.querySelector("#email").value.trim();
+
+    const password = this.shadowRoot.querySelector("#password").value;
+
+    // Mostramos los resultados en consola
+    console.log("Formulario enviado correctamente");
+
+    console.log("Correo ingresado:", email);
+
+    console.log("¿Contraseña ingresada?:", password.length > 0 ? "Sí" : "No");
+
+    });
     }
 }
 
-// Registramos nuestro componente personalizado
 customElements.define("login-form", LoginForm);
