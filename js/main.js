@@ -4,10 +4,37 @@ import {
     guardarUsuarios
 } from "./storage.js";
 
+// Obtenemos los usuarios actuales
+const usuariosActualizados = obtenerUsuarios();
+
+// Comprobamos si el docente ya está registrado
+const existeDocente = usuariosActualizados.some(
+    usuario => usuario.email === "docente@acmeschool.com"
+);
+
+// Si no existe, lo registramos
+if (!existeDocente) {
+
+    const docente = {
+        identificacion: "1000000001",
+        nombreCompleto: "Carlos Rodríguez",
+        email: "docente@acmeschool.com",
+        telefono: "3010000000",
+        cargo: "Docente",
+        password: "Docente123!"
+    };
+
+    usuariosActualizados.push(docente);
+
+    guardarUsuarios(usuariosActualizados);
+
+    console.log("Docente registrado correctamente");
+
+}
+
 // Comprobamos nuestro almacenamiento
 console.log("Usuarios guardados:", obtenerUsuarios());
 
-// Comprobamos si existen usuarios registrados
 const usuarios = obtenerUsuarios();
 
 // Si no existen usuarios, creamos el administrador
