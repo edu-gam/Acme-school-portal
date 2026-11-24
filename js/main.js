@@ -1,5 +1,6 @@
 import "./components/login-form.js";
 import "./components/app-dashboard.js";
+import { cerrarSesion } from "./auth.js";
 
 import {
     obtenerUsuarios,
@@ -75,5 +76,15 @@ contenedor.addEventListener("login-success", (event) => {
     dashboard.setAttribute("cargo", usuario.cargo);
 
     contenedor.replaceChildren(dashboard);
+
+});
+
+contenedor.addEventListener("logout-request", () => {
+
+    cerrarSesion();
+
+    const login = document.createElement("login-form");
+
+    contenedor.replaceChildren(login);
 
 });

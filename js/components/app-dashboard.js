@@ -28,7 +28,7 @@ class AppDashboard extends HTMLElement {
                     border-radius: 0;
                     overflow: hidden;
                     font-family: Arial, sans-serif;
-}
+                }
 
                 .sidebar {
                     background-color: #174ea6;
@@ -86,6 +86,22 @@ class AppDashboard extends HTMLElement {
                     font-size: 13px;
                     color: #64748b;
                 }
+                
+                .user-info button {
+                    margin-top: 10px;
+                    padding: 9px 15px;
+                    background-color: #ffffff;
+                    color: #174ea6;
+                    border: 1px solid #174ea6;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-weight: bold;
+                }
+
+                            .user-info button:hover {
+                    background-color: #174ea6;
+                    color: white;
+                }   
 
                 .welcome h1 {
                     color: #1e293b;
@@ -185,6 +201,10 @@ class AppDashboard extends HTMLElement {
 
                             <span id="cargoUsuario"></span>
 
+                            <button id="btnCerrarSesion">
+                                Cerrar sesión
+                            </button>
+
                         </div>
 
                     </header>
@@ -244,6 +264,18 @@ class AppDashboard extends HTMLElement {
 
         this.shadowRoot.querySelector("#saludoUsuario").textContent =
             "¡Bienvenido, " + nombre + "!";
+
+        const botonCerrarSesion =
+            this.shadowRoot.querySelector("#btnCerrarSesion");
+
+        botonCerrarSesion.addEventListener("click", () => {
+
+            this.dispatchEvent(new CustomEvent("logout-request", {
+                bubbles: true,
+                composed: true
+    }));
+
+});
 
     }
 

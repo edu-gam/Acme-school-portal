@@ -43,3 +43,12 @@ export function iniciarSesion(email, password) {
     };
 
 }
+
+export function cerrarSesion() {
+
+    // Eliminamos los datos de la sesión
+    localStorage.removeItem("acme_sesion");
+
+    console.log("Sesión cerrada correctamente");
+
+}
