@@ -113,6 +113,15 @@ class ExamManagement extends HTMLElement {
                     background-color: #b91c1c;
                 }
 
+                .boton-preguntas {
+                    background-color: #0f766e;
+                    margin-left: 8px;
+                }
+
+                .boton-preguntas:hover {
+                    background-color: #115e59;
+                }
+
                 /* TABLA */
 
                 .tabla-container {
@@ -279,6 +288,8 @@ class ExamManagement extends HTMLElement {
                     </table>
 
                 </div>
+
+                <div id="contenidoPreguntas"></div>
 
             </div>
 
@@ -551,11 +562,43 @@ class ExamManagement extends HTMLElement {
 
         acciones.appendChild(botonEliminar);
 
-        // Agregamos la celda
-        fila.appendChild(acciones);
+                // Creamos el botón Preguntas
+        const botonPreguntas = document.createElement("button");
 
-        // Agregamos la fila a la tabla
-        listaExamenes.appendChild(fila);
+        botonPreguntas.textContent = "Preguntas";
+
+        botonPreguntas.type = "button";
+
+        // Le asignamos una clase
+        botonPreguntas.className = "boton-preguntas";
+
+        // Escuchamos el clic
+        botonPreguntas.addEventListener("click", () => {
+
+            // Creamos nuestro componente de preguntas
+            const moduloPreguntas =
+                document.createElement("question-management");
+
+            // Enviamos el código del examen seleccionado
+            moduloPreguntas.setAttribute("codigo", examen.codigo);
+
+            // Seleccionamos el contenedor
+            const contenidoPreguntas =
+                this.shadowRoot.querySelector("#contenidoPreguntas");
+
+            // Mostramos el componente
+            contenidoPreguntas.replaceChildren(moduloPreguntas);
+
+        });
+
+            // Agregamos el botón
+            acciones.appendChild(botonPreguntas);
+
+            // Agregamos la celda
+            fila.appendChild(acciones);
+
+            // Agregamos la fila a la tabla
+            listaExamenes.appendChild(fila);
 
         }); // Cerramos forEach
 

@@ -6,6 +6,7 @@ import {
 } from "./auth.js";
 import "./components/user-management.js";
 import "./components/exam-management.js";
+import "./components/question-management.js";
 
 import {
     obtenerUsuarios,
