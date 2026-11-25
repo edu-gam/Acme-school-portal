@@ -1,4 +1,7 @@
-import { obtenerUsuarios } from "../storage.js";
+import {
+    obtenerUsuarios,
+    guardarUsuarios
+} from "../storage.js";
 
 class UserManagement extends HTMLElement {
 
@@ -262,6 +265,7 @@ class UserManagement extends HTMLElement {
 
                 </form>
 
+                <p id="mensajeFormulario" role="status" aria-live="polite"></p>
 
                 <!-- TABLA DE USUARIOS -->
 
@@ -313,9 +317,94 @@ class UserManagement extends HTMLElement {
         `;
 
         this.mostrarUsuarios();
+            // Seleccionamos el formulario
+    const formulario =
+        this.shadowRoot.querySelector("#formularioUsuario");
+
+    // Escuchamos cuando se envía el formulario
+    formulario.addEventListener("submit", (event) => {
+
+        // Evitamos que la página se recargue
+        event.preventDefault();
+
+        // Obtenemos los datos del formulario
+        const identificacion = this.shadowRoot
+            .querySelector("#identificacion").value.trim();
+
+        const nombreCompleto = this.shadowRoot
+            .querySelector("#nombre").value.trim();
+
+        const email = this.shadowRoot
+            .querySelector("#email").value.trim().toLowerCase();
+
+        const telefono = this.shadowRoot
+            .querySelector("#telefono").value.trim();
+
+        const cargo = this.shadowRoot
+            .querySelector("#cargo").value;
+
+        const password = this.shadowRoot
+            .querySelector("#password").value;
+
+        // Obtenemos los usuarios actuales
+        const usuarios = obtenerUsuarios();
+
+        // Comprobamos si ya existe la identificación o el correo
+        const usuarioExistente = usuarios.some(usuario =>
+            usuario.identificacion === identificacion ||
+            (usuario.email || "").toLowerCase() === email
+        );
+
+        // Seleccionamos el espacio de mensajes
+        const mensaje =
+            this.shadowRoot.querySelector("#mensajeFormulario");
+
+        // Comprobamos si el usuario ya existe
+        if (usuarioExistente) {
+
+            mensaje.textContent =
+                "El correo o la identificación ya están registrados.";
+
+            mensaje.style.color = "#dc2626";
+
+            return;
+
+        }
+
+        // Creamos el nuevo usuario
+        const nuevoUsuario = {
+            identificacion,
+            nombreCompleto,
+            email,
+            telefono,
+            cargo,
+            password
+        };
+
+        // Agregamos el usuario a la lista
+        usuarios.push(nuevoUsuario);
+
+        // Guardamos los usuarios
+        guardarUsuarios(usuarios);
+
+        // Actualizamos la tabla
+        this.mostrarUsuarios();
+
+        // Limpiamos el formulario
+        formulario.reset();
+
+        // Mostramos un mensaje de éxito
+        mensaje.textContent =
+            "¡Usuario registrado correctamente!";
+
+        mensaje.style.color = "#15803d";
+
+        console.log("Nuevo usuario registrado:", nombreCompleto);
+
+    });
 
     }
-    
+
     // Función para mostrar usuarios
     mostrarUsuarios() {
 
