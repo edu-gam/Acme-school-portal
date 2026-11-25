@@ -1,6 +1,9 @@
 import "./components/login-form.js";
 import "./components/app-dashboard.js";
-import { cerrarSesion } from "./auth.js";
+import {
+    cerrarSesion,
+    obtenerSesion
+} from "./auth.js";
 import "./components/user-management.js";
 
 import {
@@ -62,23 +65,35 @@ console.log("Usuarios guardados:", obtenerUsuarios());
 // ESCUCHAR EVENTO DE LOGIN
 const contenedor = document.querySelector("main");
 
+// Escuchamos el inicio de sesión
 contenedor.addEventListener("login-success", (event) => {
 
+    // Obtenemos los datos del usuario
     const usuario = event.detail;
 
     console.log("Usuario autenticado:", usuario.nombreCompleto);
 
     console.log("Cargo:", usuario.cargo);
 
+    // Mostramos el Dashboard
+    mostrarDashboard(usuario);
+
+});
+
+function mostrarDashboard(usuario) {
+
+    // Creamos el componente
     const dashboard = document.createElement("app-dashboard");
 
+    // Enviamos los datos del usuario
     dashboard.setAttribute("nombre", usuario.nombreCompleto);
 
     dashboard.setAttribute("cargo", usuario.cargo);
 
+    // Mostramos el Dashboard
     contenedor.replaceChildren(dashboard);
 
-});
+}
 
 contenedor.addEventListener("logout-request", () => {
 
@@ -91,5 +106,21 @@ contenedor.addEventListener("logout-request", () => {
     contenedor.replaceChildren(login);
 
 });
+
+// Comprobamos si existe una sesión activa
+const sesionActiva = obtenerSesion();
+
+// Si existe una sesión, mostramos el Dashboard
+if (sesionActiva) {
+
+    mostrarDashboard(sesionActiva);
+
+    console.log("Sesión recuperada correctamente");
+
+} else {
+
+    console.log("No existe una sesión activa");
+
+}
 
 customElements.define("user-management", UserManagement);

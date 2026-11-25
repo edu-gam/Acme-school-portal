@@ -52,3 +52,20 @@ export function cerrarSesion() {
     console.log("Sesión cerrada correctamente");
 
 }
+// Función para recuperar una sesión existente
+export function obtenerSesion() {
+
+    // Buscamos la sesión guardada
+    const sesionGuardada = localStorage.getItem("acme_sesion");
+
+    // Comprobamos si existe una sesión
+    if (sesionGuardada) {
+
+        return JSON.parse(sesionGuardada);
+
+    }
+
+    // Si no existe, devolvemos null
+    return null;
+
+}

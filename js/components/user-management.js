@@ -1,4 +1,4 @@
-// Creamos el componente de gestión de usuarios
+import { obtenerUsuarios } from "../storage.js";
 
 class UserManagement extends HTMLElement {
 
@@ -312,11 +312,84 @@ class UserManagement extends HTMLElement {
 
         `;
 
+        this.mostrarUsuarios();
+
+    }
+    
+    // Función para mostrar usuarios
+    mostrarUsuarios() {
+
+        // Obtenemos los usuarios guardados
+        const usuarios = obtenerUsuarios();
+
+        // Seleccionamos la tabla
+        const listaUsuarios =
+            this.shadowRoot.querySelector("#listaUsuarios");
+
+        // Limpiamos el contenido anterior
+        listaUsuarios.replaceChildren();
+
+        // Comprobamos si existen usuarios
+        if (usuarios.length === 0) {
+
+            const fila = document.createElement("tr");
+
+            const celda = document.createElement("td");
+
+            celda.textContent = "No hay usuarios registrados";
+
+            celda.colSpan = 6;
+
+            fila.appendChild(celda);
+
+            listaUsuarios.appendChild(fila);
+
+            return;
+
+        }
+
+        // Recorremos los usuarios registrados
+        usuarios.forEach(usuario => {
+
+            // Creamos una nueva fila
+            const fila = document.createElement("tr");
+
+            // Datos que mostraremos en la tabla
+            const datos = [
+                usuario.identificacion,
+                usuario.nombreCompleto,
+                usuario.email,
+                usuario.telefono,
+                usuario.cargo
+            ];
+
+            // Creamos una celda para cada dato
+            datos.forEach(dato => {
+
+                const celda = document.createElement("td");
+
+                celda.textContent = dato;
+
+                fila.appendChild(celda);
+
+            });
+
+            // Creamos la celda de acciones
+            const acciones = document.createElement("td");
+
+            acciones.textContent = "Próximamente";
+
+            fila.appendChild(acciones);
+
+            // Agregamos la fila a la tabla
+            listaUsuarios.appendChild(fila);
+
+        });
+
     }
 
 }
 
 
 // Registramos nuestro componente
-
 customElements.define("user-management", UserManagement);
