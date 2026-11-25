@@ -123,4 +123,3 @@ if (sesionActiva) {
 
 }
 
-customElements.define("user-management", UserManagement);

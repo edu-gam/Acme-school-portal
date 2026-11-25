@@ -10,6 +10,9 @@ class UserManagement extends HTMLElement {
 
         // Creamos el Shadow DOM
         this.attachShadow({ mode: "open" });
+
+        // Identificación del usuario que estamos editando
+        this.identificacionEditando = null;
     }
 
     connectedCallback() {
@@ -316,8 +319,8 @@ class UserManagement extends HTMLElement {
 
         `;
 
-        this.mostrarUsuarios();
-            // Seleccionamos el formulario
+this.mostrarUsuarios();
+
     const formulario =
         this.shadowRoot.querySelector("#formularioUsuario");
 
@@ -405,6 +408,7 @@ class UserManagement extends HTMLElement {
 
     }
 
+
     // Función para mostrar usuarios
     mostrarUsuarios() {
 
@@ -434,7 +438,6 @@ class UserManagement extends HTMLElement {
             listaUsuarios.appendChild(fila);
 
             return;
-
         }
 
         // Recorremos los usuarios registrados
@@ -466,19 +469,96 @@ class UserManagement extends HTMLElement {
             // Creamos la celda de acciones
             const acciones = document.createElement("td");
 
-            acciones.textContent = "Próximamente";
+            // Creamos el botón Editar
+            const botonEditar = document.createElement("button");
+
+            botonEditar.textContent = "Editar";
+
+            botonEditar.type = "button";
+
+            // Escuchamos cuando se presiona Editar
+            botonEditar.addEventListener("click", () => {
+
+                this.editarUsuario(usuario.identificacion);
+
+            });
+
+            // Agregamos el botón a la celda
+            acciones.appendChild(botonEditar);
 
             fila.appendChild(acciones);
 
-            // Agregamos la fila a la tabla
+            // AGREGAMOS LA FILA A LA TABLA
             listaUsuarios.appendChild(fila);
 
         });
 
     }
 
+
+    // Función para cargar los datos de un usuario
+    editarUsuario(identificacion) {
+
+        // Obtenemos los usuarios registrados
+        const usuarios = obtenerUsuarios();
+
+        // Buscamos el usuario seleccionado
+        const usuario = usuarios.find(usuario =>
+            usuario.identificacion === identificacion
+        );
+
+        // Comprobamos si existe
+        if (!usuario) {
+            return;
+        }
+
+        // Guardamos la identificación original
+        this.identificacionEditando = identificacion;
+
+        // Cargamos los datos en el formulario
+        this.shadowRoot.querySelector("#identificacion").value =
+            usuario.identificacion;
+
+        this.shadowRoot.querySelector("#nombre").value =
+            usuario.nombreCompleto;
+
+        this.shadowRoot.querySelector("#email").value =
+            usuario.email;
+
+        this.shadowRoot.querySelector("#telefono").value =
+            usuario.telefono;
+
+        this.shadowRoot.querySelector("#cargo").value =
+            usuario.cargo;
+
+        this.shadowRoot.querySelector("#password").value =
+            usuario.password;
+
+        // Cambiamos el texto del botón
+        const boton = this.shadowRoot.querySelector(
+            "#formularioUsuario button[type='submit']"
+        );
+
+        boton.textContent = "Guardar cambios";
+
+        // Mostramos un mensaje
+        const mensaje =
+            this.shadowRoot.querySelector("#mensajeFormulario");
+
+        mensaje.textContent =
+            "Estás editando a " + usuario.nombreCompleto;
+
+        mensaje.style.color = "#1769e0";
+
+    }
+
 }
 
+// Fin de la clase UserManagement
 
-// Registramos nuestro componente
-customElements.define("user-management", UserManagement);
+if (!customElements.get("user-management")) {
+
+    // Registramos nuestro componente
+    customElements.define("user-management", UserManagement);
+
+}
