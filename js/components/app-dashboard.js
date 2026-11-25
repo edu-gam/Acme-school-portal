@@ -409,12 +409,16 @@ class AppDashboard extends HTMLElement {
                     titulo.textContent = "Gestión de exámenes";
 
                     descripcion.textContent =
-                        "Aquí podrás crear y administrar los exámenes.";
+                        "Crea y administra los exámenes de Acme School.";
 
                     tarjetas.style.display = "none";
 
-                    // Limpiamos el módulo anterior
-                    contenidoModulo.replaceChildren();
+                    // Creamos nuestro componente
+                    const moduloExamenes =
+                        document.createElement("exam-management");
+
+                    // Lo mostramos en el Dashboard
+                    contenidoModulo.replaceChildren(moduloExamenes);
 
                 }
 

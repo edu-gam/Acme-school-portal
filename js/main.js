@@ -5,6 +5,7 @@ import {
     obtenerSesion
 } from "./auth.js";
 import "./components/user-management.js";
+import "./components/exam-management.js";
 
 import {
     obtenerUsuarios,
