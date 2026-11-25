@@ -352,11 +352,24 @@ this.mostrarUsuarios();
         // Obtenemos los usuarios actuales
         const usuarios = obtenerUsuarios();
 
+
         // Comprobamos si ya existe la identificación o el correo
-        const usuarioExistente = usuarios.some(usuario =>
-            usuario.identificacion === identificacion ||
-            (usuario.email || "").toLowerCase() === email
-        );
+        const usuarioExistente = usuarios.some(usuario => {
+
+            // Comprobamos que no sea el usuario que estamos editando
+            const esOtroUsuario =
+                usuario.identificacion !== this.identificacionEditando;
+
+            const mismaIdentificacion =
+                usuario.identificacion === identificacion;
+
+            const mismoCorreo =
+                (usuario.email || "").toLowerCase() === email;
+
+            return esOtroUsuario &&
+                (mismaIdentificacion || mismoCorreo);
+
+        });
 
         // Seleccionamos el espacio de mensajes
         const mensaje =
@@ -374,8 +387,8 @@ this.mostrarUsuarios();
 
         }
 
-        // Creamos el nuevo usuario
-        const nuevoUsuario = {
+        // Creamos el objeto con los datos del formulario
+        const usuarioFormulario = {
             identificacion,
             nombreCompleto,
             email,
@@ -384,10 +397,40 @@ this.mostrarUsuarios();
             password
         };
 
-        // Agregamos el usuario a la lista
-        usuarios.push(nuevoUsuario);
+        // Comprobamos si estamos editando
+        const estabaEditando =
+            this.identificacionEditando !== null;
 
-        // Guardamos los usuarios
+        if (estabaEditando) {
+
+            // Buscamos el usuario original
+            const indiceUsuario = usuarios.findIndex(usuario =>
+                usuario.identificacion === this.identificacionEditando
+            );
+
+            // Comprobamos si encontramos el registro
+            if (indiceUsuario === -1) {
+
+                mensaje.textContent =
+                    "No se encontró el usuario que deseas editar.";
+
+                mensaje.style.color = "#dc2626";
+
+                return;
+
+            }
+
+            // Actualizamos el usuario
+            usuarios[indiceUsuario] = usuarioFormulario;
+
+        } else {
+
+            // Registramos un usuario nuevo
+            usuarios.push(usuarioFormulario);
+
+        }
+
+        // Guardamos los cambios en localStorage
         guardarUsuarios(usuarios);
 
         // Actualizamos la tabla
@@ -396,17 +439,41 @@ this.mostrarUsuarios();
         // Limpiamos el formulario
         formulario.reset();
 
-        // Mostramos un mensaje de éxito
-        mensaje.textContent =
-            "¡Usuario registrado correctamente!";
+        // Reiniciamos el modo de edición
+        this.identificacionEditando = null;
+
+        // Restauramos el texto del botón
+        const boton = this.shadowRoot.querySelector(
+            "#formularioUsuario button[type='submit']"
+        );
+
+        boton.textContent = "Registrar usuario";
+
+        // Mostramos el mensaje correspondiente
+        if (estabaEditando) {
+
+            mensaje.textContent =
+                "¡Usuario actualizado correctamente!";
+
+        } else {
+
+            mensaje.textContent =
+                "¡Usuario registrado correctamente!";
+
+        }
 
         mensaje.style.color = "#15803d";
 
-        console.log("Nuevo usuario registrado:", nombreCompleto);
+        console.log(
+            estabaEditando
+                ? "Usuario actualizado:"
+                : "Nuevo usuario registrado:",
+            nombreCompleto
+        );
 
     });
 
-    }
+}
 
 
     // Función para mostrar usuarios
