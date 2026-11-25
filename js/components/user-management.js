@@ -95,6 +95,15 @@ class UserManagement extends HTMLElement {
                     background-color: #1053b5;
                 }
 
+                .boton-eliminar {
+                    background-color: #dc2626;
+                    margin-left: 8px;
+                }
+
+.boton-eliminar:hover {
+    background-color: #b91c1c;
+}
+
                 /* TABLA */
 
                 .tabla-container {
@@ -550,9 +559,30 @@ this.mostrarUsuarios();
 
             });
 
-            // Agregamos el botón a la celda
+            // Agregamos el botón Editar
             acciones.appendChild(botonEditar);
 
+            // Creamos el botón Eliminar
+            const botonEliminar = document.createElement("button");
+
+            botonEliminar.textContent = "Eliminar";
+
+            botonEliminar.type = "button";
+
+            // Le asignamos una clase
+            botonEliminar.className = "boton-eliminar";
+
+            // Escuchamos el clic
+            botonEliminar.addEventListener("click", () => {
+
+                this.eliminarUsuario(usuario.identificacion);
+
+            });
+
+            // Agregamos el botón Eliminar
+            acciones.appendChild(botonEliminar);
+
+            // Agregamos la celda a la fila
             fila.appendChild(acciones);
 
             // AGREGAMOS LA FILA A LA TABLA
@@ -616,6 +646,69 @@ this.mostrarUsuarios();
             "Estás editando a " + usuario.nombreCompleto;
 
         mensaje.style.color = "#1769e0";
+
+    }
+
+        // Función para eliminar usuarios
+    eliminarUsuario(identificacion) {
+
+        // Obtenemos los usuarios registrados
+        const usuarios = obtenerUsuarios();
+
+        // Buscamos el usuario seleccionado
+        const usuario = usuarios.find(usuario =>
+            usuario.identificacion === identificacion
+        );
+
+        // Comprobamos si existe
+        if (!usuario) {
+            return;
+        }
+
+        // Seleccionamos el espacio de mensajes
+        const mensaje =
+            this.shadowRoot.querySelector("#mensajeFormulario");
+
+        // Protegemos la cuenta administrativa principal
+        if (usuario.email === "admin@acmeschool.com") {
+
+            mensaje.textContent =
+                "No puedes eliminar la cuenta administrativa principal.";
+
+            mensaje.style.color = "#dc2626";
+
+            return;
+        }
+
+        // Solicitamos confirmación
+        const confirmar = confirm(
+            "¿Estás seguro de que deseas eliminar a " +
+            usuario.nombreCompleto + "?"
+        );
+
+        // Si cancela, no hacemos nada
+        if (!confirmar) {
+            return;
+        }
+
+        // Creamos una lista sin el usuario seleccionado
+        const usuariosActualizados = usuarios.filter(usuario =>
+            usuario.identificacion !== identificacion
+        );
+
+        // Guardamos la nueva lista
+        guardarUsuarios(usuariosActualizados);
+
+        // Actualizamos la tabla
+        this.mostrarUsuarios();
+
+        // Mostramos un mensaje
+        mensaje.textContent =
+            "Usuario eliminado correctamente.";
+
+        mensaje.style.color = "#15803d";
+
+        console.log("Usuario eliminado:", usuario.nombreCompleto);
 
     }
 
