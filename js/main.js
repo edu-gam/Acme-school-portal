@@ -1,6 +1,7 @@
 import "./components/login-form.js";
 import "./components/app-dashboard.js";
 import { cerrarSesion } from "./auth.js";
+import "./components/user-management.js";
 
 import {
     obtenerUsuarios,
@@ -90,3 +91,5 @@ contenedor.addEventListener("logout-request", () => {
     contenedor.replaceChildren(login);
 
 });
+
+customElements.define("user-management", UserManagement);

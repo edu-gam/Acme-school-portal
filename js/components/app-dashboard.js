@@ -273,9 +273,6 @@ class AppDashboard extends HTMLElement {
 
                     </div>
 
-
-                    <!-- TARJETAS PRINCIPALES -->
-
                     <div class="cards" id="tarjetasInicio">
 
                         <div class="card">
@@ -289,19 +286,19 @@ class AppDashboard extends HTMLElement {
 
                         </div>
 
-
                         <div class="card">
 
                             <h3>Gestión de exámenes</h3>
 
                             <p>
-                                Crea, actualiza y administra los
-                                exámenes de Acme School.
+                                Crea, actualiza y administra los exámenes.
                             </p>
 
                         </div>
 
                     </div>
+
+                    <div id="contenidoModulo"></div>
 
                 </section>
 
@@ -352,6 +349,9 @@ class AppDashboard extends HTMLElement {
         const tarjetas =
             this.shadowRoot.querySelector("#tarjetasInicio");
 
+        const contenidoModulo =
+            this.shadowRoot.querySelector("#contenidoModulo");
+
 
         // Recorremos los enlaces del menú
         enlacesMenu.forEach(enlace => {
@@ -372,46 +372,49 @@ class AppDashboard extends HTMLElement {
 
                 });
 
-
-                // Marcamos la opción seleccionada
                 enlace.classList.add("activo");
-
-
-                // COMPROBAMOS LA SECCION
 
                 if (seccion === "inicio") {
 
-                    titulo.textContent =
-                        "¡Bienvenido, " + nombre + "!";
+                    titulo.textContent = "¡Bienvenido, " + nombre + "!";
 
                     descripcion.textContent =
                         "Bienvenido a la plataforma de gestión de Acme School.";
 
                     tarjetas.style.display = "grid";
 
+                    // Limpiamos el contenido de otros módulos
+                    contenidoModulo.replaceChildren();
+
                 }
 
                 else if (seccion === "usuarios") {
 
-                    titulo.textContent =
-                        "Gestión de usuarios";
+                    titulo.textContent = "Gestión de usuarios";
 
                     descripcion.textContent =
-                        "Aquí podrás administrar los usuarios de Acme School.";
+                        "Administra los usuarios de Acme School.";
 
                     tarjetas.style.display = "none";
+
+                    const moduloUsuarios =
+                        document.createElement("user-management");
+
+                    contenidoModulo.replaceChildren(moduloUsuarios);
 
                 }
 
                 else if (seccion === "examenes") {
 
-                    titulo.textContent =
-                        "Gestión de exámenes";
+                    titulo.textContent = "Gestión de exámenes";
 
                     descripcion.textContent =
                         "Aquí podrás crear y administrar los exámenes.";
 
                     tarjetas.style.display = "none";
+
+                    // Limpiamos el módulo anterior
+                    contenidoModulo.replaceChildren();
 
                 }
 
