@@ -1,4 +1,7 @@
+
 import { iniciarSesion } from "../auth.js";
+
+// Creamos nuestro componente LoginForm
 class LoginForm extends HTMLElement {
 
     constructor() {
@@ -10,7 +13,9 @@ class LoginForm extends HTMLElement {
 
     connectedCallback() {
 
+        // Construimos la interfaz del Login
         this.shadowRoot.innerHTML = `
+
             <style>
 
                 .login-card {
@@ -64,7 +69,26 @@ class LoginForm extends HTMLElement {
                 button:hover {
                     background-color: #1053b5;
                 }
-                
+
+                .public-button {
+                    width: 100%;
+                    margin-top: 12px;
+                    padding: 12px;
+
+                    background-color: white;
+                    color: #1769e0;
+
+                    border: 1px solid #1769e0;
+                    border-radius: 7px;
+
+                    cursor: pointer;
+                    font-weight: bold;
+                }
+
+                .public-button:hover {
+                    background-color: #eff6ff;
+                }
+
                 .mensaje {
                     text-align: center;
                     margin-top: 15px;
@@ -81,15 +105,21 @@ class LoginForm extends HTMLElement {
 
             </style>
 
+
             <div class="login-card">
 
                 <h1>Acme School</h1>
 
                 <p>Ingresa a tu cuenta para continuar</p>
 
-                <form>
 
-                    <label for="email">Correo electrónico</label>
+                <!-- FORMULARIO DE LOGIN -->
+
+                <form id="formularioLogin">
+
+                    <label for="email">
+                        Correo electrónico
+                    </label>
 
                     <input
                         type="email"
@@ -98,7 +128,9 @@ class LoginForm extends HTMLElement {
                         required
                     >
 
-                    <label for="password">Contraseña</label>
+                    <label for="password">
+                        Contraseña
+                    </label>
 
                     <input
                         type="password"
@@ -111,60 +143,128 @@ class LoginForm extends HTMLElement {
                         Iniciar sesión
                     </button>
 
-                    <div id="mensaje" class="mensaje" role="status" aria-live="polite"></div>
+                    <div
+                        id="mensaje"
+                        class="mensaje"
+                        role="status"
+                        aria-live="polite"
+                    ></div>
 
                 </form>
 
+
+                <!-- ACCESO PUBLICO -->
+
+                <button
+                    type="button"
+                    id="btnPortalPublico"
+                    class="public-button"
+                >
+                    Realizar un examen
+                </button>
+
             </div>
+
         `;
-const formulario = this.shadowRoot.querySelector("form");
 
-// Escuchamos cuando se envía
-formulario.addEventListener("submit", (event) => {
-    event.preventDefault();
 
-    // Obtenemos los datos ingresados
-    const email = this.shadowRoot.querySelector("#email").value.trim().toLowerCase();
+        // =====================================
+        // EVENTO DE INICIO DE SESION
+        // =====================================
 
-    const password = this.shadowRoot.querySelector("#password").value;
+        const formulario =
+            this.shadowRoot.querySelector("#formularioLogin");
 
-    // Intentamos iniciar sesión
-    const resultado = iniciarSesion(email, password);
+        formulario.addEventListener("submit", (event) => {
 
-    // Seleccionamos el espacio para mostrar mensajes
-    const mensaje = this.shadowRoot.querySelector("#mensaje");
+            // Evitamos que la página se recargue
+            event.preventDefault();
 
-    // Comprobamos el resultado
-    if (resultado.correcto) {
+            // Obtenemos los datos ingresados
+            const email = this.shadowRoot
+                .querySelector("#email")
+                .value.trim().toLowerCase();
 
-        mensaje.textContent = "¡Bienvenido, " + resultado.usuario.nombreCompleto + "!";
+            const password = this.shadowRoot
+                .querySelector("#password")
+                .value;
 
-        mensaje.className = "mensaje exito";
+            // Intentamos iniciar sesión
+            const resultado = iniciarSesion(email, password);
 
-        console.log("Inicio de sesión exitoso");
-        
-        this.dispatchEvent(new CustomEvent("login-success", {
+            // Seleccionamos el espacio para mensajes
+            const mensaje =
+                this.shadowRoot.querySelector("#mensaje");
 
-        detail: resultado.usuario,
 
-        bubbles: true,
+            // Comprobamos el resultado
+            if (resultado.correcto) {
 
-        composed: true
+                mensaje.textContent =
+                    "¡Bienvenido, " +
+                    resultado.usuario.nombreCompleto + "!";
 
-}));
+                mensaje.className = "mensaje exito";
 
-    } else {
+                console.log("Inicio de sesión exitoso");
 
-        mensaje.textContent = "Correo o contraseña incorrectos.";
 
-        mensaje.className = "mensaje error";
+                // Enviamos el evento de login
+                this.dispatchEvent(new CustomEvent("login-success", {
 
-        console.log("Credenciales incorrectas");
+                    detail: resultado.usuario,
+
+                    bubbles: true,
+
+                    composed: true
+
+                }));
+
+            } else {
+
+                mensaje.textContent =
+                    "Correo o contraseña incorrectos.";
+
+                mensaje.className = "mensaje error";
+
+                console.log("Credenciales incorrectas");
+
+            }
+
+        });
+
+
+        // =====================================
+        // EVENTO DEL PORTAL PUBLICO
+        // =====================================
+
+        const botonPortalPublico =
+            this.shadowRoot.querySelector("#btnPortalPublico");
+
+        botonPortalPublico.addEventListener("click", () => {
+
+            console.log("Solicitando acceso al portal público");
+
+            // Enviamos el evento para abrir el portal
+            this.dispatchEvent(new CustomEvent("public-exams-request", {
+
+                bubbles: true,
+
+                composed: true
+
+            }));
+
+        });
 
     }
 
-});
-    }
 }
 
-customElements.define("login-form", LoginForm);
+
+// REGISTRAMOS EL COMPONENTE
+
+if (!customElements.get("login-form")) {
+
+    customElements.define("login-form", LoginForm);
+
+}

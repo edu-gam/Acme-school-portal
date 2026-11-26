@@ -1,18 +1,17 @@
+
 const CLAVE_USUARIOS = "acme_usuarios";
 const CLAVE_EXAMENES = "acme_examenes";
 
+// Obtener usuarios
 export function obtenerUsuarios() {
 
-    const usuariosGuardados = localStorage.getItem(CLAVE_USUARIOS);
+    const datos = localStorage.getItem(CLAVE_USUARIOS);
 
-    if (usuariosGuardados) {
-        return JSON.parse(usuariosGuardados);
-    }
+    return datos ? JSON.parse(datos) : [];
 
-    return [];
 }
 
-// Función para guardar los usuarios
+// Guardar usuarios
 export function guardarUsuarios(usuarios) {
 
     localStorage.setItem(
@@ -22,25 +21,16 @@ export function guardarUsuarios(usuarios) {
 
 }
 
-// Función para obtener los exámenes
+// Obtener exámenes
 export function obtenerExamenes() {
 
-    // Buscamos los exámenes guardados
-    const examenesGuardados =
-        localStorage.getItem(CLAVE_EXAMENES);
+    const datos = localStorage.getItem(CLAVE_EXAMENES);
 
-    // Comprobamos si existen exámenes
-    if (examenesGuardados) {
-
-        return JSON.parse(examenesGuardados);
-
-    }
-
-    // Si no existen, devolvemos un arreglo vacío
-    return [];
+    return datos ? JSON.parse(datos) : [];
 
 }
 
+// Guardar exámenes
 export function guardarExamenes(examenes) {
 
     localStorage.setItem(

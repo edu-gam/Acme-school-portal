@@ -1,118 +1,196 @@
+
 import "./components/login-form.js";
 import "./components/app-dashboard.js";
+import "./components/user-management.js";
+import "./components/exam-management.js";
+import "./components/question-management.js";
+import "./components/public-exam-portal.js";
+import "./components/exam-player.js";
+
 import {
     cerrarSesion,
     obtenerSesion
 } from "./auth.js";
-import "./components/user-management.js";
-import "./components/exam-management.js";
-import "./components/question-management.js";
 
 import {
     obtenerUsuarios,
     guardarUsuarios
 } from "./storage.js";
 
-// OBTENER USUARIOS REGISTRADOS
+
+// ====================================
+// CREAR USUARIOS INICIALES
+// ====================================
+
 const usuarios = obtenerUsuarios();
 
-const existeAdministrador = usuarios.some(
-    usuario => usuario.email === "admin@acmeschool.com"
+const existeAdministrador = usuarios.some(usuario =>
+    usuario.email === "admin@acmeschool.com"
 );
 
 if (!existeAdministrador) {
 
-    const administrador = {
+    usuarios.push({
         identificacion: "1000000000",
         nombreCompleto: "Administrador Acme",
         email: "admin@acmeschool.com",
         telefono: "3000000000",
         cargo: "Administrativo",
         password: "Admin123!"
-    };
-
-    usuarios.push(administrador);
-
-    console.log("Administrador registrado correctamente");
+    });
 
 }
 
-const existeDocente = usuarios.some(
-    usuario => usuario.email === "docente@acmeschool.com"
+const existeDocente = usuarios.some(usuario =>
+    usuario.email === "docente@acmeschool.com"
 );
 
 if (!existeDocente) {
 
-    const docente = {
+    usuarios.push({
         identificacion: "1000000001",
         nombreCompleto: "Carlos Rodríguez",
         email: "docente@acmeschool.com",
         telefono: "3010000000",
         cargo: "Docente",
         password: "Docente123!"
-    };
-
-    usuarios.push(docente);
-
-    console.log("Docente registrado correctamente");
+    });
 
 }
 
-// GUARDAR USUARIOS
 guardarUsuarios(usuarios);
 
-console.log("Usuarios guardados:", obtenerUsuarios());
 
+// ====================================
+// CONTENEDOR PRINCIPAL
+// ====================================
 
-// ESCUCHAR EVENTO DE LOGIN
 const contenedor = document.querySelector("main");
 
-// Escuchamos el inicio de sesión
+
+// ====================================
+// MOSTRAR DASHBOARD
+// ====================================
+
+function mostrarDashboard(usuario) {
+
+    const dashboard = document.createElement("app-dashboard");
+
+    dashboard.setAttribute(
+        "nombre",
+        usuario.nombreCompleto
+    );
+
+    dashboard.setAttribute(
+        "cargo",
+        usuario.cargo
+    );
+
+    contenedor.replaceChildren(dashboard);
+}
+
+
+// ====================================
+// INICIAR SESIÓN
+// ====================================
+
 contenedor.addEventListener("login-success", (event) => {
 
-    // Obtenemos los datos del usuario
     const usuario = event.detail;
 
     console.log("Usuario autenticado:", usuario.nombreCompleto);
 
     console.log("Cargo:", usuario.cargo);
 
-    // Mostramos el Dashboard
     mostrarDashboard(usuario);
 
 });
 
-function mostrarDashboard(usuario) {
 
-    // Creamos el componente
-    const dashboard = document.createElement("app-dashboard");
-
-    // Enviamos los datos del usuario
-    dashboard.setAttribute("nombre", usuario.nombreCompleto);
-
-    dashboard.setAttribute("cargo", usuario.cargo);
-
-    // Mostramos el Dashboard
-    contenedor.replaceChildren(dashboard);
-
-}
+// ====================================
+// CERRAR SESIÓN
+// ====================================
 
 contenedor.addEventListener("logout-request", () => {
 
-    // Cerramos la sesión
     cerrarSesion();
 
     const login = document.createElement("login-form");
 
-    // Reemplazamos el Dashboard por el Login
     contenedor.replaceChildren(login);
 
 });
 
-// Comprobamos si existe una sesión activa
+
+// ====================================
+// ABRIR PORTAL PÚBLICO
+// ====================================
+
+contenedor.addEventListener("public-exams-request", () => {
+
+    const portal = document.createElement("public-exam-portal");
+
+    contenedor.replaceChildren(portal);
+
+});
+
+
+// ====================================
+// VOLVER AL LOGIN
+// ====================================
+
+contenedor.addEventListener("back-to-login", () => {
+
+    const login = document.createElement("login-form");
+
+    contenedor.replaceChildren(login);
+
+});
+
+
+// ====================================
+// RECIBIR DATOS DEL ESTUDIANTE
+// ====================================
+
+contenedor.addEventListener("student-ready", (event) => {
+
+    const examen = event.detail.examen;
+
+    const estudiante = event.detail.estudiante;
+
+    const jugador = document.createElement("exam-player");
+
+    // IMPORTANTE: asignamos los datos antes de insertar
+    // el componente para que connectedCallback los encuentre.
+
+    jugador.examen = examen;
+
+    jugador.estudiante = estudiante;
+
+    contenedor.replaceChildren(jugador);
+
+});
+
+
+// ====================================
+// VOLVER AL PORTAL DESDE EL EXAMEN
+// ====================================
+
+contenedor.addEventListener("back-to-portal", () => {
+
+    const portal = document.createElement("public-exam-portal");
+
+    contenedor.replaceChildren(portal);
+
+});
+
+
+// ====================================
+// RECUPERAR SESIÓN
+// ====================================
+
 const sesionActiva = obtenerSesion();
 
-// Si existe una sesión, mostramos el Dashboard
 if (sesionActiva) {
 
     mostrarDashboard(sesionActiva);
@@ -124,4 +202,3 @@ if (sesionActiva) {
     console.log("No existe una sesión activa");
 
 }
-

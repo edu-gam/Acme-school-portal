@@ -1,3 +1,4 @@
+
 * {
     margin: 0;
     padding: 0;
@@ -7,7 +8,6 @@
 body {
     min-height: 100vh;
     width: 100%;
-
     font-family: Arial, sans-serif;
     background-color: #f4f7fc;
     color: #1e293b;
@@ -20,4 +20,19 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* El Login permanece centrado */
+
+main > login-form {
+    width: min(100%, 400px);
+}
+
+/* Los demás módulos ocupan toda la pantalla */
+
+main > app-dashboard,
+main > public-exam-portal,
+main > exam-player {
+    width: 100%;
+    min-height: 100vh;
 }
